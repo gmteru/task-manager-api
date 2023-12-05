@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS `projects` (
     `id` bigint auto_increment,
-    `name` varchar(50) NOT NULL DEFAULT '',
+    `name` varchar(50) DEFAULT 'NO NAME',
     `description` varchar(50) DEFAULT NULL,
     `start_date` date DEFAULT NULL,
     `end_date` date DEFAULT NULL,
