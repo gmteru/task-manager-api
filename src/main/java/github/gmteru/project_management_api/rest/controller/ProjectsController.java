@@ -1,7 +1,6 @@
-package github.gmteru.project_management_api.rest;
+package github.gmteru.project_management_api.rest.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,56 +15,56 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import github.gmteru.project_management_api.persistence.model.TaskJPA;
-import github.gmteru.project_management_api.persistence.repository.jpa.ITaskJPARepository;
+import github.gmteru.project_management_api.rest.dto.ProjectDTO;
+import github.gmteru.project_management_api.rest.service.ProjectsService;
 
 @RestController
-@RequestMapping("/tasks")
-public class TasksController {
+@RequestMapping("/projects")
+public class ProjectsController {
     @Autowired
-    ITaskJPARepository repository;
+    ProjectsService service;
 
     @GetMapping("/count")
     public Long count() {
-        return repository.count();
+        return service.count();
     }
 
     @GetMapping("")
-    public List<TaskJPA> findAll() {
-        return repository.findAll();
+    public List<ProjectDTO> findAll() {
+        return service.findAll();
     }
 
     @GetMapping("/{id}")
-    public TaskJPA findById(@PathVariable Long id) {
-        Optional<TaskJPA> task = repository.findById(id);
-        if (task.isEmpty()) {
+    public ProjectDTO findById(@PathVariable Long id) {
+        ProjectDTO project = service.findById(id);
+        if(project == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-            "Entity not found");
+            "Entity not found.");
         }
 
-        return task.get();
+        return project;
     }
 
     @PostMapping("")
     @ResponseStatus(code=HttpStatus.CREATED)
-    public TaskJPA create(@RequestBody TaskJPA task) {
-        return repository.save(task);
+    public ProjectDTO create(@RequestBody ProjectDTO project) {
+        return service.create(project);
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(code=HttpStatus.NO_CONTENT, reason = "Entity updated")
-    public void update(@PathVariable int id, @RequestBody TaskJPA task) {
-        if (id != task.getId()) {
+    @ResponseStatus(code=HttpStatus.NO_CONTENT, reason="Entity updated")
+    public void update(@PathVariable int id, @RequestBody ProjectDTO project) {
+        if (id != project.getId()) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED,
-            "Error in query");
+            "Error in query");       
         }
-    
-        repository.save(task);
+
+        service.update(project);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(code=HttpStatus.NO_CONTENT, reason = "Entity deleted")
-    public void delete (@PathVariable Long id) {
-        repository.deleteById(id);
+    @ResponseStatus(code=HttpStatus.NO_CONTENT, reason="Entity deleted")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
     }
 }
